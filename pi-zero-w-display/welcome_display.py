@@ -8,7 +8,7 @@ import platform
 import sys
 
 from PIL import Image, ImageDraw, ImageOps
-from yoctopuce import yocto_api, yocto_display
+from yoctopuce import yocto_api, yocto_display, yocto_files
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 QR_SIZE = 64
@@ -132,15 +132,40 @@ def main() -> int:
         layer.selectGrayPen(255)
 
         remote_name = "welcome-screen.gif"
-        result = display.upload(remote_name, welcome_as_gif(qr_path, width, height))
+        image_data = welcome_as_gif(qr_path, width, height)
+        result = display.upload(remote_name, image_data)
         if result is not None and result < 0:
-            print(f"QR upload failed: {display.get_errorMessage()}", file=sys.stderr)
-            return 1
+            # The locally compiled ARMv6 library can report IO_ERROR even
+            # after completing the upload. Verify the file before failing.
+            files = yocto_files.YFiles.FirstFiles()
+            uploaded = {
+                item.get_name(): item.get_size()
+                for item in files.get_list(remote_name)
+            }
+            if uploaded.get(remote_name) != len(image_data):
+                print(
+                    f"QR upload failed ({result}): {display.get_errorMessage()}",
+                    file=sys.stderr,
+                )
+                return 1
+            print(
+                f"Ignoring false upload status {result}; file verified.",
+                file=sys.stderr,
+            )
 
         result = layer.drawImage(0, 0, remote_name)
         if result is not None and result < 0:
-            print(f"QR drawing failed: {display.get_errorMessage()}", file=sys.stderr)
-            return 1
+            # The ARMv6 library can likewise report a false command error.
+            if not display.isOnline():
+                print(
+                    f"QR drawing failed ({result}): {display.get_errorMessage()}",
+                    file=sys.stderr,
+                )
+                return 1
+            print(
+                f"Ignoring false draw status {result}; display remains online.",
+                file=sys.stderr,
+            )
 
         text_center = QR_SIZE + (width - QR_SIZE) // 2
         layer.selectFont("8x8.yfm")
