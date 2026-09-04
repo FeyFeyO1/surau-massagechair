@@ -1,0 +1,14 @@
+.git
+.env
+.env.*
+!.env.example
+!.env.pi.example
+__pycache__/
+*.py[cod]
+node_modules/
+server-*.log
+start-site.cmd
+animated_welcome_test.py
+session_display_test.py
+welcome_test.py
+massage_chair_clean.png

@@ -1,0 +1,20 @@
+services:
+  maxidisplay-controller:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: surau-maxidisplay-controller:local
+    container_name: surau-maxidisplay-controller
+    restart: unless-stopped
+    environment:
+      MQTT_HOST: "${MQTT_HOST:-minecraft.duniapalsu.com}"
+      MQTT_PORT: "${MQTT_PORT:-1883}"
+      MQTT_TOPIC: "${MQTT_TOPIC:-surau/setia-eco-glades/massage-chair/1/session}"
+      MQTT_USERNAME: "${MQTT_USERNAME:-}"
+      MQTT_PASSWORD: "${MQTT_PASSWORD:-}"
+    # Yoctopuce direct USB access. USB bus/device numbers can change after a
+    # reconnect, so mount the complete USB bus instead of one numbered device.
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    device_cgroup_rules:
+      - "c 189:* rmw"

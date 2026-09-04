@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#808000" />
+    <title>Surau Setia Eco Glades | Massage Chair Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="payment-shell">
+      <header>
+        <a class="brand" href="#top" aria-label="Surau Setia Eco Glades home">
+          <img src="surau-logo.png" alt="Surau Setia Eco Glades, Cyberjaya" />
+        </a>
+        <div class="header-actions">
+          <div class="secure" data-i18n="secure">Secure payment</div>
+          <div class="language-switcher" role="group" aria-label="Language">
+            <button type="button" data-language="en" class="active">EN</button>
+            <button type="button" data-language="ms">BM</button>
+            <button type="button" data-language="ar">ع</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero" id="top">
+        <div class="hero-content">
+          <h1><span data-i18n="heroTitle">Pause. Recharge.</span><br /><button class="secret-trigger" id="secretTrigger" type="button" data-i18n="heroSecret">Feel renewed.</button></h1>
+          <p data-i18n="heroBody">Settle in, scan to pay, and enjoy a quiet moment at Surau Setia Eco Glades.</p>
+        </div>
+      </section>
+
+      <nav class="stepper" aria-label="Payment progress">
+        <span class="step active" data-step-indicator="1"><b>1</b><span data-i18n="stepChoose">Choose</span></span><i></i>
+        <span class="step" data-step-indicator="2"><b>2</b><span data-i18n="stepPay">Pay</span></span><i></i>
+        <span class="step" data-step-indicator="3"><b>3</b><span data-i18n="stepVerify">Verify</span></span>
+      </nav>
+
+      <section class="flow-step active" data-step="1" aria-labelledby="choose-title">
+        <div class="section-heading">
+          <span class="section-kicker" data-i18n="step1">STEP 1 OF 3</span>
+          <h2 id="choose-title" data-i18n="chooseTitle">Choose your session</h2>
+          <p data-i18n="chooseBody">Select how long you would like to recharge.</p>
+        </div>
+        <div class="chair-status" id="chairStatus" role="status" aria-live="polite">
+          <span class="chair-status-dot" aria-hidden="true"></span>
+          <span id="chairStatusText" data-i18n="checkingChair">Checking chair availability&hellip;</span>
+        </div>
+        <div class="plan-grid">
+          <button class="plan-card" type="button" data-minutes="10" data-price="5">
+            <span class="popular" aria-hidden="true">&nbsp;</span>
+            <span class="plan-duration"><strong>10</strong> <span data-i18n="minutes">minutes</span></span>
+            <span class="plan-price">RM 5</span>
+            <span class="plan-action"><span data-i18n="selectSession">Select session</span> <b>&rarr;</b></span>
+          </button>
+          <button class="plan-card" type="button" data-minutes="20" data-price="10">
+            <span class="popular" data-i18n="longerRecharge">LONGER RECHARGE</span>
+            <span class="plan-duration"><strong>20</strong> <span data-i18n="minutes">minutes</span></span>
+            <span class="plan-price">RM 10</span>
+            <span class="plan-action"><span data-i18n="selectSession">Select session</span> <b>&rarr;</b></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="flow-step" data-step="2" aria-labelledby="pay-title">
+        <button class="back-button" type="button" data-back="1"><span aria-hidden="true">&larr;</span> <span data-i18n="changeSession">Change session</span></button>
+        <div class="section-heading">
+          <span class="section-kicker" data-i18n="step2">STEP 2 OF 3</span>
+          <h2 id="pay-title" data-i18n="payTitle">Make your payment</h2>
+          <p data-i18n="payBody">Follow these instructions using your preferred banking or e-wallet app.</p>
+        </div>
+        <div class="selected-summary">
+          <span><b id="selectedMinutes">10 minutes</b><small data-i18n="selectedSession">Selected session</small></span>
+          <strong id="selectedPrice">RM 5.00</strong>
+        </div>
+        <ol class="instructions">
+          <li><b data-i18n="instruction1Title">Open your banking app</b><span data-i18n="instruction1Body">Choose the DuitNow QR or Scan &amp; Pay option.</span></li>
+          <li><b data-i18n="instruction2Title">Scan the QR code on the wall</b><span data-i18n="instruction2Body">Point your phone at the payment QR displayed beside the chair.</span></li>
+          <li><b data-i18n="instruction3Title">Confirm the correct amount</b><span data-i18n="instruction3Body">Pay the exact amount shown above for your selected session.</span></li>
+          <li><b data-i18n="instruction4Title">Complete the transfer</b><span data-i18n="instruction4Body">Keep the successful payment receipt for verification.</span></li>
+        </ol>
+        <div class="wall-qr-note">
+          <span aria-hidden="true">⌗</span>
+          <p><b data-i18n="wallQrTitle">Payment QR is on the wall</b><small data-i18n="wallQrBody">Please scan the physical QR code beside the massage chair.</small></p>
+        </div>
+        <button class="confirm-button" id="continueButton" type="button"><span data-i18n="paidButton">I have paid</span> <span>&rarr;</span></button>
+      </section>
+
+      <section class="flow-step" data-step="3" aria-labelledby="verify-title">
+        <button class="back-button" type="button" data-back="2"><span aria-hidden="true">&larr;</span> <span data-i18n="backPayment">Back to payment</span></button>
+        <div class="section-heading">
+          <span class="section-kicker" data-i18n="step3">STEP 3 OF 3</span>
+          <h2 id="verify-title" data-i18n="verifyTitle">Verify your payment</h2>
+          <p data-i18n="verifyBody">Upload your receipt and leave a phone number so we can contact you if the amount needs correcting.</p>
+        </div>
+        <form id="verificationForm">
+          <label class="field-label" for="phone"><span data-i18n="phoneLabel">Phone number</span> <span data-i18n="required">Required</span></label>
+          <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="e.g. 0123456789" data-i18n-placeholder="phonePlaceholder" minlength="10" maxlength="15" pattern="[0-9]{10,15}" required />
+          <small class="field-note" data-i18n="phoneNote">Only used if your payment amount is too high or too low.</small>
+
+          <label class="field-label" for="receipt"><span data-i18n="receiptLabel">Payment receipt</span> <span data-i18n="required">Required</span></label>
+          <label class="upload-zone" for="receipt" id="uploadZone">
+            <span class="upload-icon">&uarr;</span>
+            <strong id="uploadTitle" data-i18n="uploadTitle">Upload payment screenshot</strong>
+            <small id="uploadHint" data-i18n="uploadHint">PNG, JPG or PDF &middot; Maximum 10 MB</small>
+          </label>
+          <input id="receipt" name="receipt" type="file" accept="image/png,image/jpeg,application/pdf" required />
+          <p class="submit-status" id="submitStatus" role="status"></p>
+          <button class="confirm-button" id="submitButton" type="submit"><span data-i18n="submitButton">Submit for validation</span> <span>&rarr;</span></button>
+        </form>
+      </section>
+
+      <section class="flow-step validation-screen" data-step="4" aria-labelledby="validation-title" aria-live="polite">
+        <div class="loading-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="section-kicker" data-i18n="pleaseWait">PLEASE WAIT</span>
+        <h2 id="validation-title" data-i18n="validatingTitle">Validating your payment</h2>
+        <p data-i18n="validatingBody">We are securely uploading your receipt and checking the submission details.</p>
+      </section>
+
+      <section class="flow-step end-screen" data-step="5" aria-labelledby="complete-title">
+        <div class="success-icon">&check;</div>
+        <span class="section-kicker" id="completionKicker" data-i18n="submissionReceived">SUBMISSION RECEIVED</span>
+        <h2 id="complete-title" data-i18n="paymentSent">Payment sent for validation.</h2>
+        <p id="completionMessage" data-i18n="receiptReceived">We have received your receipt. Your selected session will be ready once the payment has been checked.</p>
+        <div class="completion-card">
+          <span id="sessionPhase" data-i18n="yourSession">YOUR SESSION</span>
+          <strong id="sessionCountdown">--:--</strong>
+          <small id="completedSession">10 minutes &middot; Surau Setia Eco Glades</small>
+        </div>
+        <button class="confirm-button" id="startAgainButton" type="button"><span data-i18n="startAgain">Start another session</span> <span>&rarr;</span></button>
+        <p class="end-note" data-i18n="thankSupport">Thank you for supporting Surau Setia Eco Glades.</p>
+      </section>
+
+      <p class="support"><span data-i18n="trouble">Having trouble? Contact</span> <a href="tel:+601137974563">+60 11-3797 4563</a></p>
+    </main>
+
+    <dialog class="access-dialog" id="accessDialog">
+      <button class="dialog-close" id="closeAccessDialog" type="button" aria-label="Close">&times;</button>
+      <h2 data-i18n="passwordPrompt">Enter the password:</h2>
+      <form id="accessForm">
+        <label class="field-label" for="accessPassword" data-i18n="password">Password</label>
+        <input id="accessPassword" type="password" autocomplete="off" required />
+        <p class="password-error" id="passwordError" role="alert"></p>
+        <button class="confirm-button" type="submit"><span data-i18n="unlock">Unlock session</span> <span>&rarr;</span></button>
+      </form>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
