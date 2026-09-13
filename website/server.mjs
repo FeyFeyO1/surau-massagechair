@@ -155,18 +155,20 @@ async function uploadReceipt(request, response) {
   form.append('file', new Blob([fileBuffer], { type: fileType }), filename);
 
   let upstream;
+  let responseText;
   try {
     upstream = await fetch(`${ziplineUrl}/api/upload`, {
       method: 'POST',
       headers: { authorization: ziplineToken, 'x-zipline-filename': filename, 'x-zipline-original-name': 'true' },
       body: form,
+      signal: AbortSignal.timeout(30_000),
     });
+    responseText = await upstream.text();
   } catch (error) {
     console.error('Could not reach Zipline:', error);
     await releaseFailedSession(sessionId);
     return json(response, 502, { error: 'The server could not connect to receipt storage. Please try again shortly.' });
   }
-  const responseText = await upstream.text();
   if (!upstream.ok) {
     console.error('Zipline upload failed:', upstream.status, responseText);
     await releaseFailedSession(sessionId);
@@ -185,11 +187,13 @@ async function uploadReceipt(request, response) {
   let sheetsResponse = null;
   let sheetsError = null;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
+    if (!ownsProcessingSession(sessionId)) break;
     try {
       sheetsResponse = await fetch(googleSheetsWebhookUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: sheetsPayload,
+        signal: AbortSignal.timeout(20_000),
       });
       if (sheetsResponse.ok) break;
       sheetsError = `HTTP ${sheetsResponse.status}: ${await sheetsResponse.text()}`;
@@ -202,6 +206,10 @@ async function uploadReceipt(request, response) {
     console.error('Google Sheets webhook failed after 3 attempts:', sheetsError);
     await releaseFailedSession(sessionId);
     return json(response, 502, { error: 'Receipt was uploaded, but its details could not be recorded. Please contact the administrator.' });
+  }
+
+  if (!ownsProcessingSession(sessionId)) {
+    return json(response, 409, { error: 'The chair reservation expired while recording your receipt. Please contact the administrator before submitting again.' });
   }
 
   const confirmedState = {
@@ -220,6 +228,11 @@ async function uploadReceipt(request, response) {
   }
 
   json(response, 201, { ok: true, file: receiptUrl, session: publicSessionState() });
+}
+
+function ownsProcessingSession(sessionId) {
+  return sessionState.state === 'processing' && sessionState.sessionId === sessionId
+    && Date.now() - Date.parse(sessionState.updatedAt) < processingTimeoutMs;
 }
 
 function idleState(source = 'pi') {

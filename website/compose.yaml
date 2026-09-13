@@ -4,7 +4,7 @@ services:
   payment-website:
     build:
       context: .
-      dockerfile: Dockerfile.web
+      dockerfile: Dockerfile
     image: surau-payment-website:local
     container_name: surau-payment-website
     restart: unless-stopped

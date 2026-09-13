@@ -117,6 +117,7 @@ document.querySelector('#verificationForm').addEventListener('submit', async (ev
   try {
     const dataBase64 = await fileToBase64(file);
     const response = await fetch('/api/receipts', {
+      signal: AbortSignal.timeout(110_000),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -141,7 +142,9 @@ document.querySelector('#verificationForm').addEventListener('submit', async (ev
     showStep(5);
     await refreshChairState();
   } catch (error) {
-    submitStatus.textContent = error instanceof TypeError && error.message === 'Failed to fetch'
+    submitStatus.textContent = error.name === 'TimeoutError'
+      ? 'Receipt processing took too long. Please contact the administrator to check your submission before trying again.'
+      : error instanceof TypeError && error.message === 'Failed to fetch'
       ? t('serverUnavailable')
       : error.message;
     showStep(3);
