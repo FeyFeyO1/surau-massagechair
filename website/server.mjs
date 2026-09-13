@@ -22,8 +22,9 @@ const setupDurationMs = Number(process.env.SETUP_DURATION_MS || 60_000);
 const chairResetOffMs = Number(process.env.CHAIR_RESET_OFF_MS || 10_000);
 const chairResetOnMs = Number(process.env.CHAIR_RESET_ON_MS || 15_000);
 const shellyCommandTopic = `${shellyMqttPrefix.replace(/\/+$/, '')}/rpc`;
+const controllerId = `surau-payment-${randomUUID()}`;
 const mqttClient = mqtt.connect(mqttUrl, {
-  clientId: `surau-payment-${randomUUID()}`,
+  clientId: controllerId,
   username: process.env.MQTT_USERNAME || undefined,
   password: process.env.MQTT_PASSWORD || undefined,
   reconnectPeriod: 2000,
@@ -45,6 +46,9 @@ mqttClient.on('message', (topic, payload) => {
   if (topic !== mqttTopic) return;
   try {
     const next = JSON.parse(payload.toString('utf8'));
+    // Local transitions already update state and control the relay. Ignore our
+    // broker echo; retained state from a previous server instance still recovers.
+    if (next?.controllerId === controllerId) return;
     if (isSessionState(next)) {
       sessionState = next;
       scheduleCurrentState();
@@ -254,7 +258,7 @@ function publicSessionState() {
 }
 
 async function publishSession(value) {
-  await mqttClient.publishAsync(mqttTopic, JSON.stringify(value), { qos: 1, retain: true });
+  await mqttClient.publishAsync(mqttTopic, JSON.stringify({ ...value, controllerId }), { qos: 1, retain: true });
 }
 
 async function setRelay(on) {
@@ -292,6 +296,7 @@ async function startActiveSession(sessionId, minutes) {
 
 async function resetChair(sessionId) {
   if (resetInProgress || sessionState.state !== 'active' || sessionState.sessionId !== sessionId) return;
+  if (Date.now() < Number(sessionState.phaseEndsAt)) return;
   resetInProgress = true;
   clearPhaseTimer();
   try {
@@ -318,9 +323,16 @@ function scheduleCurrentState() {
   const deadline = Number(sessionState.phaseEndsAt);
   if (!Number.isFinite(deadline)) return;
   const delayMs = Math.max(0, deadline - Date.now());
+  const { state, sessionId, minutes, phaseEndsAt } = sessionState;
   phaseTimer = setTimeout(() => {
-    if (sessionState.state === 'setup') startActiveSession(sessionState.sessionId, sessionState.minutes).catch(reportSessionError);
-    if (sessionState.state === 'active') resetChair(sessionState.sessionId).catch(reportSessionError);
+    // A callback belongs only to the phase for which it was scheduled.
+    if (sessionState.state !== state || sessionState.sessionId !== sessionId
+      || sessionState.phaseEndsAt !== phaseEndsAt) return;
+    if (state === 'setup') {
+      startActiveSession(sessionId, minutes).catch(reportSessionError);
+    } else if (state === 'active') {
+      resetChair(sessionId).catch(reportSessionError);
+    }
   }, delayMs);
 }
 
