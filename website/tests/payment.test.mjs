@@ -132,7 +132,9 @@ for (const minutes of [10, 20]) {
     assert.deepEqual(relayCommands(), [true,false]);
     await f.advance(10000);
     assert.deepEqual(relayCommands(), [true,false,true]);
-    await f.advance(15000);
+    await f.advance(29999);
+    assert.deepEqual(relayCommands(), [true,false,true], 'chair must stay powered for the full reset period');
+    await f.advance(1);
     assert.equal(f.getState().state, 'idle');
     assert.deepEqual(relayCommands(), [true,false,true,false], 'MQTT echoes must not repeat relay commands');
   });

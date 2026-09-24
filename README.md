@@ -39,6 +39,6 @@ idle → processing → setup (60 seconds) → active (10 or 20 minutes) → res
 
 The website backend is the sole authority for this lifecycle. It energizes the
 relay for setup and active states, then resets the chair by powering it off for
-10 seconds, on for 15 seconds, and off again before publishing `idle`.
+10 seconds, on for 30 seconds, and off again before publishing `idle`.
 
 `README.legacy.md` preserves the previous project notes and deployment guide.
